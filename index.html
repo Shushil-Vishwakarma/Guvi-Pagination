@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagination Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #content {
+            margin-bottom: 20px;
+        }
+
+        #pagination {
+            text-align: center;
+        }
+
+        .pagination-button, .pagination-nav {
+            display: inline-block;
+            padding: 10px;
+            margin: 0 5px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .pagination-button.active, .pagination-nav.active {
+            background-color: #0056b3;
+        }
+
+        .pagination-button:hover, .pagination-nav:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <!-- Content will be dynamically loaded here -->
+    </div>
+    <div id="pagination">
+        <!-- Pagination buttons will be dynamically added here -->
+    </div>
+
+    <script>
+        const content = document.getElementById('content');
+        const pagination = document.getElementById('pagination');
+        const itemsPerPage = 5;
+        const totalItems = 20; // Assuming there are 20 items
+        let currentPage = 1;
+
+        function renderContent(page) {
+            content.innerHTML = ''; // Clear previous content
+            const start = (page - 1) * itemsPerPage;
+            const end = Math.min(start + itemsPerPage, totalItems);
+
+            for (let i = start; i < end; i++) {
+                const item = document.createElement('div');
+                item.textContent = `Item ${i + 1}`;
+                content.appendChild(item);
+            }
+        }
+
+        function renderPagination() {
+            pagination.innerHTML = ''; // Clear previous pagination buttons
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            // Add "First" button
+            const firstButton = document.createElement('button');
+            firstButton.textContent = 'First';
+            firstButton.className = 'pagination-nav';
+            firstButton.addEventListener('click', () => {
+                currentPage = 1;
+                renderContent(currentPage);
+                updateActiveButton(currentPage);
+            });
+            pagination.appendChild(firstButton);
+
+            // Add "Previous" button
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.className = 'pagination-nav';
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderContent(currentPage);
+                    updateActiveButton(currentPage);
+                }
+            });
+            pagination.appendChild(prevButton);
+
+            // Add numbered buttons
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.className = 'pagination-button';
+                button.addEventListener('click', () => {
+                    currentPage = i;
+                    renderContent(currentPage);
+                    updateActiveButton(currentPage);
+                });
+
+                if (i === 1) button.classList.add('active');
+                pagination.appendChild(button);
+            }
+
+            // Add "Next" button
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.className = 'pagination-nav';
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderContent(currentPage);
+                    updateActiveButton(currentPage);
+                }
+            });
+            pagination.appendChild(nextButton);
+
+            // Add "Last" button
+            const lastButton = document.createElement('button');
+            lastButton.textContent = 'Last';
+            lastButton.className = 'pagination-nav';
+            lastButton.addEventListener('click', () => {
+                currentPage = totalPages;
+                renderContent(currentPage);
+                updateActiveButton(currentPage);
+            });
+            pagination.appendChild(lastButton);
+        }
+
+        function updateActiveButton(page) {
+            const buttons = document.querySelectorAll('.pagination-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            if (buttons[page - 1]) {
+                buttons[page - 1].classList.add('active');
+            }
+        }
+
+        // Initialize
+        renderContent(1);
+        renderPagination();
+    </script>
+</body>
+</html>
